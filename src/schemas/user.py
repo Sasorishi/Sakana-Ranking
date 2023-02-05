@@ -1,0 +1,9 @@
+from pydantic import BaseModel
+
+class User(BaseModel):
+    iduser: str
+    displayName: str
+    rank: str | None = ...
+    rankingPoint: float | None = ...
+    mmr: float | None = ...
+
