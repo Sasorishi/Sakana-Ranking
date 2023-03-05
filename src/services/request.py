@@ -1,4 +1,5 @@
 import requests
+import json
 
 url = "http://localhost:8000/"
 
@@ -6,9 +7,9 @@ class RequestService():
     # def __init__(self):
     #     print("Users init")
 
-    def setRank(self, idplayer: str, params: object):
+    def setRank(self, idplayer: str, params: object, ref: str):
         global url
-        uri = f"users/update/rank/{idplayer}"
+        uri = f"{ref}/update/rank/{idplayer}"
         rank = params['rank']
         division = params['division']
         rankPoints = params['rankPoints']
@@ -21,9 +22,52 @@ class RequestService():
         response = requests.request("PUT", url + uri, headers=headers, data=payload)
         print(response.text)
 
-    def resetRank(self, idplayer: str):
+    def setDataInSeason(self, idseason: str, params: object, ratio: float):
         global url
-        uri = f"users/update/rank/{idplayer}"
+        uri = f"leagues/update/rank/{idseason}/{params.iduser}"
+        rank = params.rank
+        division = params.division
+        rankPoints = params.rankPoints
+        wins = params.matchs['wins']
+        defeates = params.matchs['defeates']
+        draws = params.matchs['draws']
+
+        if hasattr(params, 'gamepositions'):
+            gamepositions = params.gamepositions
+            data = {
+                "rank": rank,
+                "division": division,
+                "rankPoints": rankPoints,
+                "wins": wins,
+                "defeates": defeates,
+                "draws": draws,
+                "ratio": ratio,
+                "gamepositions": {
+                    gamepositions
+                }
+            }
+            payload = json.dumps(data)
+        else:
+            data = {
+                "rank": rank,
+                "division": division,
+                "rankPoints": rankPoints,
+                "wins": wins,
+                "defeates": defeates,
+                "draws": draws,
+                "ratio": ratio
+            }
+            payload = json.dumps(data)
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("PUT", url + uri, headers=headers, data=payload)
+        print(response.text)
+
+    def resetRank(self, idplayer: str, ref: str):
+        global url
+        uri = f"{ref}/update/rank/{idplayer}"
         rank = 'Unranked'
         division = 'Unranked'
         rankPoints = 0

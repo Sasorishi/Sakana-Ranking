@@ -3,6 +3,7 @@ from .schemas.team import Team
 from .services.ranking import RankingService
 from .services.user import UserService
 from .services.request import RequestService
+from .services.anticheat import AntiCheatService
 
 app = FastAPI()
 
@@ -19,24 +20,48 @@ async def users(request: object = Body(...)):
     rankingService = RankingService()
     userService = UserService()
     requestService = RequestService()
-    playerA = userService.getData(request['idplayer_a'])
-    playerB = userService.getData(request['idplayer_b'])
-    points = rankingService.getRankPoint(playerA, playerB, request['score'])
+    anticheatService = AntiCheatService()
 
-    requestService.setRank(request['idplayer_a'], points['playerA'])
-    requestService.setRank(request['idplayer_b'], points['playerB'])
-    return {"playerA" : points['playerA'], "playerB" : points['playerB']}
+    cheating = anticheatService.detectCheat(request['timestamp'])
+
+    if cheating != True:
+        playerA = userService.getData(request['idplayer_a'])
+        playerB = userService.getData(request['idplayer_b'])
+        points = rankingService.getRankPoint(playerA, playerB, request['score'])
+
+        requestService.setRank(request['idplayer_a'], points['playerA'], "users")
+        requestService.setRank(request['idplayer_b'], points['playerB'], "users")
+
+        requestService.setDataInSeason("9tAs9J0lvfOKKGx2mGyF", playerA, rankingService.getRatio(playerA.matchs['wins'], playerA.matchs['defeates']))
+        requestService.setDataInSeason("9tAs9J0lvfOKKGx2mGyF", playerB, rankingService.getRatio(playerB.matchs['wins'], playerB.matchs['defeates']))
+        return {"playerA" : points['playerA'], "playerB" : points['playerB']}
+    return {"Error" : "Cheat detected"}
 
 @app.post("/users/reset_rank")
 async def users(request: object = Body(...)):
     requestService = RequestService()
-    requestService.resetRank(request['idplayer_a'])
-    requestService.resetRank(request['idplayer_b'])
+    requestService.resetRank(request['idplayer_a'], "users")
+    requestService.resetRank(request['idplayer_b'], "users")
     return {"Success" : "reset rank"}
 
 @app.get("/teams")
 async def teams():
     return {"hello" : "world"}
+
+@app.post("/season/users/reset")
+async def season(request: object = Body(...)):
+    requestService = RequestService()
+    userService = UserService()
+    try:
+        if request['reset'] == True:
+            players = userService.getAllUsersId()
+            for player in players:
+                requestService.resetRank(player['id'], "users")
+            messages = {"Success" : "All ranks has been reset"}
+    except:
+        messages = {"Errors" : "All ranks hasn't been reset"}
+    return messages
+        
 
 @app.get("/test/{idplayer}")
 async def update(idplayer: str):

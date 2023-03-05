@@ -1,47 +1,31 @@
-cheating = None
+from .settings import Settings
+import time
+from datetime import datetime, timedelta, date
 
-class AnticheatService():
-    # def __init__(self):
-    #     print("Ranking init")
+class AntiCheatService():
+    def __init__(self):
+        self.settings = Settings()
 
+    def checkDatetime(self, timestamp: int):
+        result = datetime.fromtimestamp(int(timestamp))
+        if result.hour <= self.settings.sundown and result.hour >= self.settings.sunrise:
+            return True
+        return False
 
-# def antiCheat():
-    # fraude date soir
-    # fraude meme personne
-
-# bo3
-# 72 = 4 wins
-# 18
-# 12
-
-# 4 fois wins pour monter
-# 6 fois loses pour descendre
-# 5O wins de suites pour être platinum 3
-# 36-2 24-3 18-4 12-6 
-
-# Sakana League
-# Champion 1 2300 1680
-# Champion 2
-# Champion 3
-# Champion 4 2100
-# Diamond 1 2099
-# Diamond 2
-# Diamond 3
-# Diamond 4 1750 1176
-# Platnium 1 1749 1104
-# Platinum 2 * 1032
-# Platinum 3 * 960
-# Platinum 4 1550 888
-# Gold 1 1549 816
-# Gold 2 * 744
-# Gold 3 * 672
-# Gold 4 1350 600
-# Fer 1 1399 528
-# Fer 2 * 456
-# Fer 3 * 384
-# Fer 4 1150 312
-# Bronze 1 1149 240
-# Bronze 2 1049 168
-# Bronze 3 949 96
-# Bronze 4 849 24
-# Unranked 849
+    def checkSameOpponent(self, matchs: object, playerA: str, playerB: str):
+        # 1 semaine de diff evite le PL
+        result = datetime.fromtimestamp(timestamp)
+        expiredays = result + datetime.timedelta(days = self.settings.reloaddays)
+        array = None
+        # for match in matchs:
+        #     if match.hostId == player or match.
+        return False
+    
+    def softBanAccount(self):
+        return True
+    
+    def detectCheat(self, timestamp: int):
+        if self.checkDatetime(timestamp):
+            return True
+        # self.checkSameOpponent()
+        return False

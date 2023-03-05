@@ -11,6 +11,7 @@ class RankingService():
 
     def isChangeDivision(self, value: int, player_rank: str):
         indice = 5
+        # print(f"value: {value}, rank: {player_rank}")
         match player_rank:
             case 'Unranked':
                 if value >= self.settings.bronze[0]:
@@ -41,7 +42,8 @@ class RankingService():
                 for division in self.settings.champion:
                     if value >= division:
                         indice -= 1
-        return indice - 1
+        # print(f"indice: {indice}")
+        return indice
 
     def isChangeRank(self, value: int, player_rank: str):
         match player_rank:
@@ -59,7 +61,7 @@ class RankingService():
             case 'Gold':
                 if value >= self.settings.platinium[0]:
                     return 'Platinium'
-                if value <= gold[0]:
+                if value <= self.settings.gold[0]:
                     return 'Silver'
             case 'Platinium':
                 if value >= self.settings.champion[0]:
@@ -78,19 +80,21 @@ class RankingService():
 
     def unfairGame(self, diffDivision: float, rankPoints: int):
         if diffDivision == 0:
-            rankPoints += self.settings.gainPoint
-            print(f"FairGame: {rankPoints} += {self.settings.gainPoint}")
+            rankPoints += self.settings.gainPoint - 4
+            # print(f"FairGame: {rankPoints} += ({self.settings.gainPoint} - 4)")
         elif diffDivision == 1:
             rankPoints += (self.settings.gainPoint - 6)
-            print(f"FairGame: {rankPoints} += ({self.settings.gainPoint} - 6)")
+            # print(f"FairGame: {rankPoints} += ({self.settings.gainPoint} - 6)")
         elif diffDivision == 2:
+            rankPoints += (self.settings.gainPoint - 8)
+            # print(f"FairGame: {rankPoints} += ({self.settings.gainPoint} - 8)")
+        elif diffDivision == 3:
             rankPoints += (self.settings.gainPoint - 10)
-            print(f"FairGame: {rankPoints} += ({self.settings.gainPoint} - 10)")
-        elif diffDivision >= 3:
+            # print(f"FairGame: {rankPoints} += ({self.settings.gainPoint} - 10)")
+        elif diffDivision >= 4:
             rankPoints += 0
-            print(f"FairGame: {rankPoints} += 0")
-
-        print(f"DiffDivision {diffDivision}")
+            # print(f"FairGame: {rankPoints} += 0")
+        # print(f"DiffDivision {diffDivision}")
         return rankPoints
 
     def calcDiffDivision(self, divisionA: int, divisionB: int, playerA: object, playerB: object):
@@ -182,10 +186,10 @@ class RankingService():
                 if playerB.rankPoints <= 0:
                     playerB.rankPoints = 0              
                 if playerA.rankPoints > playerB.rankPoints:
-                    print(f"{playerA.rankPoints} > {playerB.rankPoints}")
+                    # print(f"{playerA.rankPoints} > {playerB.rankPoints}")
                     playerA.rankPoints = self.unfairGame(diffDivision, playerA.rankPoints)
                 else:
-                    print(f"Calc: {playerA.rankPoints} += {pointsA['gainPoint']}")
+                    # print(f"Calc: {playerA.rankPoints} += {pointsA['gainPoint']}")
                     playerA.rankPoints += pointsA['gainPoint']
 
             case 'b':
@@ -232,45 +236,3 @@ class RankingService():
         }
 
         return playersData
-        
-
-# def antiCheat():
-    # fraude date soir
-    # fraude meme personne
-
-# bo3
-# 72 = 4 wins
-# 18
-# 12
-
-# 4 fois wins pour monter
-# 6 fois loses pour descendre
-# 5O wins de suites pour être platinum 3
-# 36-2 24-3 18-4 12-6 
-
-# Sakana League
-# Champion 1 2300 1680
-# Champion 2
-# Champion 3
-# Champion 4 2100
-# Diamond 1 2099
-# Diamond 2
-# Diamond 3
-# Diamond 4 1750 1176
-# Platnium 1 1749 1104
-# Platinum 2 * 1032
-# Platinum 3 * 960
-# Platinum 4 1550 888
-# Gold 1 1549 816
-# Gold 2 * 744
-# Gold 3 * 672
-# Gold 4 1350 600
-# Fer 1 1399 528
-# Fer 2 * 456
-# Fer 3 * 384
-# Fer 4 1150 312
-# Bronze 1 1149 240
-# Bronze 2 1049 168
-# Bronze 3 949 96
-# Bronze 4 849 24
-# Unranked 849
