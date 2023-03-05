@@ -26,7 +26,8 @@ class UserService():
     def getStats(self, idplayer):
         data = self.getDataMatchs(idplayer)
         statsGameposition = self.gamepositions(data)
-        if statsGameposition != None:
+        # print(f"gameposition: {statsGameposition}")
+        if statsGameposition:
             matchs = {
                 'wins': 0,
                 'defeates': 0,
