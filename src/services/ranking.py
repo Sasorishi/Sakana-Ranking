@@ -167,9 +167,9 @@ class RankingService():
         matchs = wins + defeates + draws
         if matchs >= self.settings.brake:
             rankPoint['lostPoint'] -= 2
-            if ratio >= 1.2:
+            if ratio >= 1.4:
                 rankPoint['gainPoint'] += 6
-            elif ratio >= 1.1:
+            elif ratio >= 1.2:
                 rankPoint['gainPoint']
             else:
                 rankPoint['gainPoint'] -= 6
