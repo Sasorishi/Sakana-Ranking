@@ -22,6 +22,9 @@ class RankingService():
                 for division in self.settings.bronze:
                     if value >= division:
                         indice -= 1
+
+                    if value == 0:
+                        indice = 4
             case 'Silver':
                 for division in self.settings.silver:
                     if value >= division:

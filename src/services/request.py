@@ -32,8 +32,8 @@ class RequestService():
         defeates = params.matchs['defeates']
         draws = params.matchs['draws']
 
-        if hasattr(params, 'gamepositions'):
-            gamepositions = params.gamepositions
+        if 'gamepositions' in params.matchs:
+            gamepositions = params.matchs['gamepositions']
             data = {
                 "rank": rank,
                 "division": division,
@@ -42,9 +42,7 @@ class RequestService():
                 "defeates": defeates,
                 "draws": draws,
                 "ratio": ratio,
-                "gamepositions": {
-                    gamepositions
-                }
+                "gamepositions": gamepositions
             }
             payload = json.dumps(data)
         else:

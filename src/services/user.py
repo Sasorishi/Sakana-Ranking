@@ -13,37 +13,59 @@ class UserService():
         request = json.loads(requests.get(url + 'games/ranked/' + idplayer).text)
         return request
     
-    def gamepositions(self, data: object):
+    def getDataGamepositions(self, data: object):
         stats = {}
-        if hasattr(data, 'gamepositions'):
-            stats[data.gamepositions] = {
-                'wins': 0,
-                'defeates': 0,
-                'draws': 0
-            }       
+        for game in data:
+            if game['gameposition'] in stats:
+                match game['result']:
+                    case "win":
+                        value = {"wins": stats[game['gameposition']]['wins'] + 1 }
+                        stats[game['gameposition']].update(value)
+                    case "defeate":
+                        value = {"defeates": stats[game['gameposition']]['defeates'] + 1 }
+                        stats[game['gameposition']].update(value)
+                    case "draw":
+                        value = {"draws": stats[game['gameposition']]['draws'] + 1 }
+                        stats[game['gameposition']].update(value)
+            else:
+                match game['result']:
+                    case "win":
+                        stats[game['gameposition']] = {
+                            'wins': 1,
+                            'defeates': 0,
+                            'draws': 0
+                        }
+                    case "defeate":
+                        stats[game['gameposition']] = {
+                            'wins': 0,
+                            'defeates': 1,
+                            'draws': 0
+                        }
+                    case "draw":
+                        stats[game['gameposition']] = {
+                            'wins': 0,
+                            'defeates': 0,
+                            'draws': 1
+                        }
         return stats
 
     def getStats(self, idplayer):
         data = self.getDataMatchs(idplayer)
-        statsGameposition = self.gamepositions(data)
-        # print(f"gameposition: {statsGameposition}")
+        statsGameposition = self.getDataGamepositions(data)
         if statsGameposition:
             matchs = {
                 'wins': 0,
                 'defeates': 0,
                 'draws': 0
             }
-            matchs['gamepositions'] = statsGameposition
             for match in data:
                 if match.get('result') == 'win':
                     matchs['wins'] += 1
-                    statsGameposition['wins'] += 1
                 elif match.get('result') == 'defeate':
                     matchs['defeates'] += 1
-                    statsGameposition['defeates'] += 1
                 elif match.get('result') == 'draw':
                     matchs['draws'] += 1
-                    statsGameposition['draws'] += 1
+            matchs['gamepositions'] = statsGameposition
         else:
             matchs = {
                 'wins': 0,
